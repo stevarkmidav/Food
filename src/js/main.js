@@ -5,8 +5,8 @@ window.addEventListener('DOMContentLoaded', () => {
         tabsParent = document.querySelector('.tabheader__items');
     
     function hideTabContent() {
+
         tabsContent.forEach(item => {
-            // item.style.display = 'none';
             item.classList.add('hide');
             item.classList.remove('show', 'fade');
         });
@@ -17,7 +17,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function showTabContent(i = 0) {
-        // tabsContent[i].style.display = 'block';
         tabsContent[i].classList.add('show', 'fade');
         tabsContent[i].classList.remove('hide');
         tabs[i].classList.add('tabheader__item_active');
@@ -28,7 +27,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     tabsParent.addEventListener('click', (event) => {
         const target = event.target;
-
         if (target && target.classList.contains('tabheader__item')) {
             tabs.forEach((item, i) => {
                 if (target == item) {
@@ -44,22 +42,12 @@ window.addEventListener('DOMContentLoaded', () => {
     const deadline = '2024-01-01';
 
     function getTimeRemaining(endtime) {
-        let days, hours, minutes, seconds;
+        const t = Date.parse(endtime) - Date.parse(new Date()),
+            days = Math.floor( (t/(1000*60*60*24)) ),
+            seconds = Math.floor( (t/1000) % 60 ),
+            minutes = Math.floor( (t/1000/60) % 60 ),
+            hours = Math.floor( (t/(1000*60*60) % 24) );
 
-        const t = Date.parse(endtime) - Date.parse(new Date());
-
-        if (t <= 0) {
-            days = 0;
-            hours = 0;
-            minutes = 0;
-            seconds = 0;
-        } else {
-            days = Math.floor(t / (1000 * 60 * 60 * 24)),
-            hours = Math.floor((t / (1000 * 60 * 60) % 24)),
-            minutes = Math.floor((t / 1000 / 60) % 60),
-            seconds = Math.floor((t / 1000) % 60);
-        }
-        
         return {
             'total': t,
             'days': days,
@@ -78,6 +66,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function setClock(selector, endtime) {
+
         const timer = document.querySelector(selector),
             days = timer.querySelector('#days'),
             hours = timer.querySelector('#hours'),
@@ -108,22 +97,20 @@ window.addEventListener('DOMContentLoaded', () => {
     const modalTrigger = document.querySelectorAll('[data-modal]'),
         modal = document.querySelector('.modal');
     
-    function openModal() {
-        // modal.classList.add('show');
-        // modal.classList.remove('hide');
-        modal.classList.toggle('show');
-        document.body.style.overflow = 'hidden';
-        clearInterval(modalTimerId);
-    }
-    
     modalTrigger.forEach(btn => {
         btn.addEventListener('click', openModal)
     });
     
+    function openModal() {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        document.body.style.overflow = 'hidden';
+        clearInterval(modalTimerId);
+    }
+    
     function closeModal() {
-        // modal.classList.add('hide');
-        // modal.classList.remove('show');
-        modal.classList.toggle('show');
+        modal.classList.add('hide');
+        modal.classList.remove('show');
         document.body.style.overflow = '';
     }
 
@@ -173,6 +160,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         render() {
             const element = document.createElement('div');
+
             if (this.classes.length === 0) {
                 this.element = "menu__item";
                 element.classList.add(this.element);
@@ -227,7 +215,6 @@ window.addEventListener('DOMContentLoaded', () => {
     // Forms
 
     const forms = document.querySelectorAll('form');
-    
     const message = {
         loading: 'img/form/spinner.svg',
         success: 'Спасибо! Скоро свяжемся',
@@ -242,18 +229,14 @@ window.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const statusMessage = document.createElement('img');
+            let statusMessage = document.createElement('img');
             statusMessage.src = message.loading;
             statusMessage.style.cssText = `
                 display: block;
                 margin: 0 auto;
             `;
-            form.insertAdjacentElement('afterend', statusMessage)
+            form.insertAdjacentElement('afterend', statusMessage);
 
-            const request = new XMLHttpRequest();
-            request.open('POST', 'server.php');
-
-            request.setRequestHeader('Content-type', 'application/json');
             const formData = new FormData(form);
 
             const object = {};
@@ -261,22 +244,23 @@ window.addEventListener('DOMContentLoaded', () => {
                 object[key] = value; 
             });
 
-            const json = JSON.stringify(object);
-
-            request.send(json);
-
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response);
-                    showThanksModal(message.success);
-                } else {
-                    showThanksModal(message.failure);
-                }
-            });
-            form.reset();
-            setTimeout(() => {
+            fetch('server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(object)
+            })
+            .then(data => data.text())
+            .then(data => {
+                console.log(data);
+                showThanksModal(message.success);
                 statusMessage.remove();
-            }, 3000);
+            }).catch(() => {
+                showThanksModal(message.failure);
+            }).finally(() => {
+                form.reset();
+            });
         });
     }
 
@@ -287,7 +271,7 @@ window.addEventListener('DOMContentLoaded', () => {
         openModal();
 
         const thanksModal = document.createElement('div');
-        thanksModal.classList.add('.modal__dialog');
+        thanksModal.classList.add('modal__dialog');
         thanksModal.innerHTML = `
         <div class="modal__content">
             <div class="modal__close" data-close>×</div>
@@ -303,6 +287,11 @@ window.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }, 4000);
     }
+
+    fetch('http://localhost:3000/menu')
+        .then(data => data.json())
+        .then(res => console.log(res));
+
 });
 
 
