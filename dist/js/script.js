@@ -81,14 +81,14 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/js/main.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/js/script.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/js/main.js":
+/***/ "./src/js/script.js":
 /*!************************!*\
-  !*** ./src/js/main.js ***!
+  !*** ./src/js/script.js ***!
   \************************/
 /*! no static exports found */
 /***/ (function(module, exports) {

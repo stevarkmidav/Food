@@ -15,7 +15,7 @@ task("copy-html", () => {
 });
 
 task("build-js", () => {
-    return src("./src/js/main.js")
+    return src("./src/js/script.js")
                 .pipe(webpack({
                     mode: 'development',
                     output: {
@@ -86,7 +86,7 @@ task("prod", () => {
     src("./src/icons/**/*.*")
         .pipe(dest(dist + "/icons"));
 
-    src("./src/js/main.js")
+    src("./src/js/script.js")
         .pipe(webpack({
             mode: 'production',
             output: {
