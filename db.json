@@ -23,10 +23,5 @@
     }
   ],
   "requests": [
-    {
-      "name": "fsdf",
-      "phone": "324",
-      "id": 1
-    }
   ]
 }
